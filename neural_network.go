@@ -43,6 +43,7 @@ type FieldRef struct {
 }
 
 type DerivedField struct {
+	Name         string `xml:"name,attr"`
 	DataType     string `xml:"dataType,attr"`
 	FieldRef     FieldRef
 	NormDiscrete NormDiscrete

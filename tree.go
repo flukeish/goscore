@@ -3,7 +3,6 @@ package goscore
 import (
 	"encoding/xml"
 	"errors"
-	"strconv"
 )
 
 type truePredicate struct{}
@@ -22,7 +21,7 @@ type Node struct {
 }
 
 // TraverseTree - traverses Node predicates with features and returns score by terminal node
-func (n Node) TraverseTree(features map[string]interface{}) (score float64, err error) {
+func (n Node) TraverseTree(features map[string]interface{}) (score string, err error) {
 	curr := n.Nodes[0]
 	for len(curr.Nodes) > 0 {
 		prevID := curr.Attrs[0].Value
@@ -33,9 +32,9 @@ func (n Node) TraverseTree(features map[string]interface{}) (score float64, err 
 	}
 
 	if len(curr.Attrs) < 2 {
-		return -1, errors.New("Terminal node without score, Node id: " + curr.Attrs[0].Value)
+		return "", errors.New("Terminal node without score, Node id: " + curr.Attrs[0].Value)
 	}
-	return strconv.ParseFloat(curr.Attrs[1].Value, 64)
+	return curr.Attrs[1].Value, nil
 }
 
 func step(curr Node, features map[string]interface{}) Node {

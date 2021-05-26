@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"math"
+	"strconv"
 	"sync"
 )
 
@@ -40,7 +41,11 @@ func (gbm *GradientBoostedModel) Score(features map[string]interface{}) (float64
 	sum := fetchConst(gbm)
 
 	for _, tree := range gbm.Trees {
-		score, err := tree.TraverseTree(features)
+		scoreStr, err := tree.TraverseTree(features)
+		if err != nil {
+			return -1, err
+		}
+		score, err := strconv.ParseFloat(scoreStr, 64)
 		if err != nil {
 			return -1, err
 		}
@@ -71,7 +76,8 @@ func (gbm *GradientBoostedModel) traverseConcurrently(features map[string]interf
 	wg.Add(len(gbm.Trees))
 	for _, tree := range gbm.Trees {
 		go func(tree Node, features map[string]interface{}) {
-			treeScore, err := tree.TraverseTree(features)
+			treeScoreStr, err := tree.TraverseTree(features)
+			treeScore, err := strconv.ParseFloat(treeScoreStr, 64)
 			scores <- result{ErrorName: err, Score: treeScore}
 			wg.Done()
 		}(tree, features)

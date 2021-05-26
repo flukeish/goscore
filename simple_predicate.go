@@ -22,6 +22,8 @@ func (p SimplePredicate) True(features map[string]interface{}) bool {
 	switch featureValue := features[p.Field].(type) {
 	case int:
 		return numericTrue(p, float64(featureValue))
+	case int64:
+		return numericTrue(p, float64(featureValue))
 	case float64:
 		return numericTrue(p, featureValue)
 	case string:
